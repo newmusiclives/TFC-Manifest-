@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import MusicianCard from '../components/MusicianCard'
-import { FiMusic, FiDollarSign, FiUsers } from 'react-icons/fi'
+import { FiMusic, FiDollarSign, FiUsers, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react'
+// Import required modules
+import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+// Import Swiper types
+import type { Swiper as SwiperType } from 'swiper'
 
 const Home = () => {
   const [featuredMusicians, setFeaturedMusicians] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const swiperRef = useRef<SwiperType | null>(null)
   
   useEffect(() => {
     const fetchFeaturedMusicians = async () => {
@@ -18,7 +25,7 @@ const Home = () => {
             *,
             users!inner(*)
           `)
-          .limit(3)
+          .limit(5)
         
         if (error) throw error
         
@@ -65,6 +72,24 @@ const Home = () => {
             location: 'Miami, FL',
             bio: 'Electronic music producer specializing in melodic house and techno.',
             songCount: 15
+          },
+          {
+            id: '4',
+            name: 'Luna Rivers',
+            profilePhoto: 'https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg',
+            genre: ['R&B', 'Soul'],
+            location: 'Chicago, IL',
+            bio: 'Soulful vocalist blending classic R&B with modern production.',
+            songCount: 9
+          },
+          {
+            id: '5',
+            name: 'Marcus Rivera',
+            profilePhoto: 'https://images.pexels.com/photos/4472061/pexels-photo-4472061.jpeg',
+            genre: ['Jazz', 'Fusion'],
+            location: 'New Orleans, LA',
+            bio: 'Jazz saxophonist pushing the boundaries of traditional and contemporary jazz.',
+            songCount: 18
           }
         ])
       } finally {
@@ -150,7 +175,7 @@ const Home = () => {
         </div>
       </section>
       
-      {/* Featured Music Artists Section */}
+      {/* Featured Music Artists Section - Now with Carousel */}
       <section className="py-12 md:py-16 bg-gray-50 dark:bg-gray-900 rounded-3xl">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
@@ -174,19 +199,71 @@ const Home = () => {
                 ))}
               </div>
             ) : (
-              <div className="grid md:grid-cols-3 gap-8">
-                {featuredMusicians.map((musician) => (
-                  <MusicianCard
-                    key={musician.id}
-                    id={musician.id}
-                    name={musician.name}
-                    profilePhoto={musician.profilePhoto}
-                    genre={musician.genre}
-                    location={musician.location}
-                    bio={musician.bio}
-                    songCount={musician.songCount}
-                  />
-                ))}
+              <div className="relative featured-carousel">
+                {/* Custom navigation buttons */}
+                <button 
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md -ml-4 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+                  onClick={() => swiperRef.current?.slidePrev()}
+                  aria-label="Previous slide"
+                >
+                  <FiChevronLeft size={24} className="text-primary-600 dark:text-primary-400" />
+                </button>
+                
+                <div className="mx-auto max-w-6xl px-4">
+                  <Swiper
+                    onSwiper={(swiper) => {
+                      swiperRef.current = swiper;
+                    }}
+                    slidesPerView={1}
+                    spaceBetween={20}
+                    centeredSlides={false}
+                    autoplay={{
+                      delay: 5000,
+                      disableOnInteraction: false,
+                    }}
+                    pagination={{
+                      clickable: true,
+                      el: '.swiper-pagination',
+                    }}
+                    breakpoints={{
+                      640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                      },
+                    }}
+                    modules={[Autoplay, Pagination, Navigation]}
+                    className="mySwiper"
+                  >
+                    {featuredMusicians.map((musician) => (
+                      <SwiperSlide key={musician.id}>
+                        <MusicianCard
+                          id={musician.id}
+                          name={musician.name}
+                          profilePhoto={musician.profilePhoto}
+                          genre={musician.genre}
+                          location={musician.location}
+                          bio={musician.bio}
+                          songCount={musician.songCount}
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+                
+                <button 
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md -mr-4 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+                  onClick={() => swiperRef.current?.slideNext()}
+                  aria-label="Next slide"
+                >
+                  <FiChevronRight size={24} className="text-primary-600 dark:text-primary-400" />
+                </button>
+                
+                {/* Pagination dots */}
+                <div className="swiper-pagination mt-6 flex justify-center"></div>
               </div>
             )}
           </div>

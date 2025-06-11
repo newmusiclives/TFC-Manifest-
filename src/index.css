@@ -130,6 +130,71 @@ body {
   }
 }
 
+/* Swiper custom styles */
+.swiper {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.swiper-slide {
+  height: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.swiper-pagination {
+  position: relative !important;
+  bottom: 0 !important;
+  margin-top: 20px;
+}
+
+.swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: var(--primary-300);
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--primary-600);
+  opacity: 1;
+}
+
+.featured-carousel {
+  padding: 0 20px;
+  position: relative;
+}
+
+.featured-carousel .swiper {
+  overflow: visible;
+}
+
+/* Make sure the carousel slides are properly sized */
+.mySwiper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.mySwiper .swiper-slide {
+  width: calc(33.333% - 30px);
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .mySwiper .swiper-slide {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 640px) {
+  .mySwiper .swiper-slide {
+    width: 100%;
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
